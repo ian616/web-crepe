@@ -18,7 +18,6 @@ export class CrepeEngine {
     private core: TVMCore | TFJSCore;
     private fnName = "forward";
     private frames?: number;
-    private readonly hopSize = 160;
 
     constructor(private cfg: CrepeConfig) {
         if (this.cfg.coreType === "tvm") {
@@ -43,7 +42,6 @@ export class CrepeEngine {
     }
 
     async infer(audio: Float32Array) {
-        this.frames = Math.floor(audio.length / this.hopSize);
 
         let bins: Float32Array;
         let disposed = false; // Flag to ensure tensors are disposed only once
@@ -99,7 +97,7 @@ export class CrepeEngine {
             throw new Error("TFJS inference returned no output");
         }
         const binsTensor = result[0];
-        const bins = binsTensor.dataSync() as Float32Array;
+        const bins = await binsTensor.data() as Float32Array;
 
         audioTensor.dispose();
         binsTensor.dispose();
