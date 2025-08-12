@@ -13,10 +13,12 @@ export class TVMCore {
 
     async init(params: TVMCoreParams): Promise<void> {
         // tvmjs 인스턴스 초기화
+        const wasi = tvmjs.createPolyfillWASI();
+
         const buf = await fetch(params.wasmUrl).then((r) => r.arrayBuffer());
         this.inst = await tvmjs.instantiate(
             buf,
-            tvmjs.createPolyfillWASI(),
+            wasi,
             params.logger ?? console.log
         );
 

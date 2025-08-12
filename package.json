@@ -22,11 +22,14 @@
     "homepage": "https://github.com/ian616/web-crepe#readme",
     "dependencies": {
         "@mlc-ai/web-runtime": "^0.18.0-dev2",
+        "@tensorflow/tfjs": "^4.22.0",
+        "@tensorflow/tfjs-backend-webgpu": "^4.22.0",
         "@types/node": "^24.1.0",
         "nvm": "^0.0.4"
     },
     "devDependencies": {
         "typescript": "^5.9.2",
-        "vite": "^7.0.6"
+        "vite": "^7.0.6",
+        "vite-plugin-externalize-dependencies": "^1.0.1"
     }
 }

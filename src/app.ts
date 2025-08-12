@@ -1,4 +1,5 @@
 import { CrepeEngine } from "./engine/crepe_engine.js";
+import "@tensorflow/tfjs-backend-webgpu"; 
 
 function sliceAudio(audio: Float32Array, frameSize = 1024, hopSize = 160) {
     const frames: Float32Array[] = [];
@@ -31,8 +32,10 @@ async function saveCSV(
 
 export async function main() {
     const engine = new CrepeEngine({
-        wasmUrl: "/model.wasm",
-        cacheUrl: "/params.bin",
+        coreType: "tfjs",
+        tfjsUrl: "tfjs/model.json",
+        // wasmUrl: "tvm/model.wasm",
+        // cacheUrl: "tvm/params.bin",
         logger: console.log,
     });
 
