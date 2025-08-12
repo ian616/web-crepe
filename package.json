@@ -21,6 +21,7 @@
     },
     "homepage": "https://github.com/ian616/web-crepe#readme",
     "dependencies": {
+        "@alexanderolsen/libsamplerate-js": "^2.1.2",
         "@mlc-ai/web-runtime": "^0.18.0-dev2",
         "@tensorflow/tfjs": "^4.22.0",
         "@tensorflow/tfjs-backend-webgpu": "^4.22.0",
