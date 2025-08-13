@@ -1,4 +1,4 @@
-import styles from './InfoCards.module.css';
+import styles from './InfoCards.module.scss';
 
 function InfoCards() {
   return <div className={styles.container}></div>;

@@ -29,12 +29,14 @@
         "nvm": "^0.0.4",
         "react": "^19.1.1",
         "react-dom": "^19.1.1",
+        "react-icons": "^5.5.0",
         "zustand": "^5.0.7"
     },
     "devDependencies": {
         "@types/react": "^19.1.10",
         "@types/react-dom": "^19.1.7",
         "@vitejs/plugin-react": "^5.0.0",
+        "sass": "^1.90.0",
         "typescript": "^5.9.2",
         "vite": "^7.0.6",
         "vite-plugin-externalize-dependencies": "^1.0.1"
