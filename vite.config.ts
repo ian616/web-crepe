@@ -1,23 +1,33 @@
 import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 import externalize from "vite-plugin-externalize-dependencies";
-import react from '@vitejs/plugin-react';
+import path from "path";
 
 export default defineConfig({
-    plugins: [externalize({ externals: ["ws"] }), react()],
-    optimizeDeps: {
-        exclude: ["ws"],
+  plugins: [
+    react(),
+    externalize({ externals: ["ws"] })
+  ],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src/app"),
+      "@components": path.resolve(__dirname, "src/app/components")
+    }
+  },
+  server: {
+    port: 5173,
+    open: true
+  },
+  assetsInclude: ["**/*.wasm"],
+  optimizeDeps: {
+    exclude: ["ws"]
+  },
+  build: {
+    commonjsOptions: {
+      ignore: ["ws"]
     },
-    build: {
-        commonjsOptions: {
-            ignore: ["ws"],
-        },
-        rollupOptions: {
-            external: ["ws"],
-        },
-    },
-    assetsInclude: ["**/*.wasm"],
-    server: {
-        port: 5173,
-        open: true,
-    },
+    rollupOptions: {
+      external: ["ws"]
+    }
+  }
 });

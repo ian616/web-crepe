@@ -1,40 +1,37 @@
 {
-  // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
-    // File Layout
-    // "rootDir": "./src",
-    // "outDir": "./dist",
-    // Environment Settings
-    // See also https://aka.ms/tsconfig/module
-    "module": "ESNext",
+    /* Target / Module (Vite + ESM) */
     "target": "ESNext",
+    "module": "ESNext",
     "moduleResolution": "bundler",
-    "types": [],
-    // For nodejs:
-    // "lib": ["esnext"],
-    // "types": ["node"],
-    // and npm install -D @types/node
-    // Other Outputs
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
-    // Stricter Typechecking Options
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-    // Style Options
-    // "noImplicitReturns": true,
-    // "noImplicitOverride": true,
-    // "noUnusedLocals": true,
-    // "noUnusedParameters": true,
-    // "noFallthroughCasesInSwitch": true,
-    // "noPropertyAccessFromIndexSignature": true,
-    // Recommended Options
-    "strict": true,
-    "jsx": "react-jsx",
-    "verbatimModuleSyntax": true,
-    "isolatedModules": true,
-    "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
+
+    /* React */
+    "jsx": "react-jsx",
+    "types": ["vite/client"],
+
+    /* Strictness & DX */
+    "strict": true,
     "skipLibCheck": true,
-  }
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "noUncheckedSideEffectImports": true,
+
+    /* Paths (alias) */
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["app/*"],
+      "@components/*": ["app/components/*"]
+    },
+
+    /* Sourcemap (개발 편의) */
+    "sourceMap": true,
+
+    /* 앱 프로젝트면 선언 파일 불필요 → 속도↑ */
+    "declaration": false,
+    "declarationMap": false
+  },
+  "include": ["src"]
 }

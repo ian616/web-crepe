@@ -1,0 +1,22 @@
+.container {
+  display: grid;
+  gap: var(--page-gap, 16px);
+  padding: var(--page-pad-y, 20px) var(--page-pad-x, clamp(16px, 3vw, 28px));
+  max-width: var(--maxw, 1200px);
+  margin: 0 auto;
+
+  grid-template-rows:
+    var(--row-infocards, 96px)                /* 고정 */
+    minmax(var(--chart-min, 260px), 1fr)      /* 최소 260px, 화면 높이에 따라가변 */
+    var(--row-piano, 120px);                  /* 고정 */
+
+  min-height: 100%;
+}
+
+/* 섹션 공통 스킨 */
+.section {
+  background: var(--color-panel, rgba(255,255,255,0.04));
+  border: 1px solid var(--color-ring, rgba(255,255,255,0.08));
+  border-radius: var(--radius, 16px);
+  overflow: hidden;
+}
