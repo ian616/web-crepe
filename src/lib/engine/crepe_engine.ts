@@ -6,8 +6,11 @@ import * as tf from "@tensorflow/tfjs";
  * in case of using TVM core: wasmUrl, cacheUrl is needed.
  * in case of using TFJS core: modelUrl is needed.
  */
+
+type Backend = "tvm" | "tfjs-webgpu" | "tfjs-webgl" | undefined;
+
 export interface CrepeConfig {
-    coreType: "tvm" | "tfjs";
+    coreType: Backend;
     tfjsUrl?: string;
     wasmUrl?: string;
     cacheUrl?: string;
@@ -17,13 +20,15 @@ export interface CrepeConfig {
 export class CrepeEngine {
     private core: TVMCore | TFJSCore;
     private fnName = "forward";
-    private frames?: number;
 
     constructor(private cfg: CrepeConfig) {
         if (this.cfg.coreType === "tvm") {
             this.core = new TVMCore();
-        } else if (this.cfg.coreType === "tfjs") {
-            this.core = new TFJSCore({ modelUrl: this.cfg.tfjsUrl! });
+        } else if (this.cfg.coreType === "tfjs-webgpu" || this.cfg.coreType === "tfjs-webgl") {
+            this.core = new TFJSCore({
+                modelUrl: this.cfg.tfjsUrl!,
+                modelType: this.cfg.coreType,
+            });
         } else {
             throw new Error("Invalid coreType specified in CrepeConfig.");
         }
@@ -38,7 +43,7 @@ export class CrepeEngine {
                     this.cfg.logger ??
                     ((msg) => console.log("[CrepeEngine]", msg)),
             });
-        } else if (this.cfg.coreType === "tfjs") {
+        } else {
             await (this.core as TFJSCore).init();
         }
     }
@@ -50,7 +55,7 @@ export class CrepeEngine {
         try {
             if (this.cfg.coreType === "tvm") {
                 bins = await this.inferWithTVM(audio);
-            } else if (this.cfg.coreType === "tfjs") {
+            } else if (this.cfg.coreType === "tfjs-webgpu" || this.cfg.coreType === "tfjs-webgl") {
                 bins = await this.inferWithTFJS(audio);
             } else {
                 throw new Error("Invalid coreType for inference.");

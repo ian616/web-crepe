@@ -1,17 +1,21 @@
 import { CrepeEngine } from "./engine/crepe_engine.js";
 import "@tensorflow/tfjs-backend-webgpu";
 import { useChartStore } from "@/stores/chartStore";
+import { useInferStore } from "@/stores/inferStore";
 import type { InferPoint } from "@/interfaces/inferPoint";
 import { fromFreq } from "@tonaljs/note";
+
+type Backend = "tvm" | "tfjs-webgpu" | "tfjs-webgl" | undefined;
+type Model = "tiny" | "medium" | "full" | undefined;
 
 let mediaStream: MediaStream | null = null;
 let audioContext: AudioContext | null = null;
 let workletNode: AudioWorkletNode | null = null;
 let engine: CrepeEngine | null = null;
 
-export async function initMIC() {
+export async function initEngine(backend: Backend, model: Model) {
     engine = new CrepeEngine({
-        coreType: "tfjs",
+        coreType: backend!,
         tfjsUrl: "tfjs/saved_model/model.json",
         // wasmUrl: "tvm/model.wasm",
         // cacheUrl: "tvm/params.bin",
@@ -114,6 +118,13 @@ export async function stopMIC() {
     console.log("[INFO] MIC inference stopped.");
 }
 
+export function disposeEngine() {
+  try {
+    engine?.dispose();
+  } finally {
+    engine = null;
+  }
+}
 
 function createInferPoint(
     f0Hz: number,

@@ -2,14 +2,17 @@ import * as tf from "@tensorflow/tfjs";
 
 export interface TFJSCoreParams {
     modelUrl: string;
+    modelType: string;
     logger?: (msg: string) => void;
 }
 
 export class TFJSCore {
     private model!: tf.GraphModel | tf.LayersModel;
+    private modelType: string;
     private logger: (msg: string) => void;
 
     constructor(private params: TFJSCoreParams) {
+        this.modelType = params.modelType;
         this.logger = params.logger ?? console.log;
     }
 
@@ -17,10 +20,10 @@ export class TFJSCore {
         await tf.ready();
         
         // Set up the backend, preferring WebGPU if available.
-        if (await tf.setBackend("webgpu")) {
+        if (this.modelType==="tfjs-webgpu" && await tf.setBackend("webgpu")) {
             this.logger("[TFJSCore] Using WebGPU backend");
-        } else if (await tf.setBackend("webgl")) {
-            this.logger("[TFJSCore] WebGPU not available, using WebGL backend");
+        } else if ( await tf.setBackend("webgl")) {
+            this.logger("[TFJSCore] Using WebGL backend");
         } else {
             throw new Error("[TFJSCore] No suitable backend found. WebGL/WebGPU not supported.");
         }

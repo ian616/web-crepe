@@ -11,23 +11,24 @@ import {
 import { useInferStore } from "@/stores/inferStore";
 import styles from "./CoreSelect.module.scss";
 
-type Backend = "tvm" | "tfjs-webgpu" | "tfjs-webgl";
+type Backend = "tvm" | "tfjs-webgpu" | "tfjs-webgl" | undefined;
 
 export default function CoreSelect() {
     const backend = useInferStore((s) => s.backend as Backend);
+    const setBackend = useInferStore((s) => s.setBackend)
 
     return (
         <div className={styles.container}>
             <Select
-                value={backend}
+                value={backend  ?? ""}
                 onValueChange={(v) => {
-                    useInferStore.setState({ backend: v as Backend });
+                    setBackend(v as Backend);
                 }}
             >
                 <SelectTrigger className={styles.trigger}>
                     <div>
                         <span className={styles.icon}>💿</span>
-                        <SelectValue placeholder="Select engine" />
+                        <SelectValue placeholder="Select Engine" />
                     </div>
                 </SelectTrigger>
 

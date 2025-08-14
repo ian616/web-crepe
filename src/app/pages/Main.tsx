@@ -3,13 +3,8 @@ import PitchChart from "@/components/pitch_chart/PitchChart";
 import PianoSlider from "@/components/piano_slider/PianoSlider";
 import InfoCards from "@/components/info_cards/InfoCards";
 import Footer from "@/components/footer/Footer";
-import { initMIC } from "../../lib/infer_mic";
-import { useEffect } from "react";
 
 export default function Main() {
-    useEffect(() => {
-        initMIC();
-    }, []);
 
     return (
         <div className={styles.container}>

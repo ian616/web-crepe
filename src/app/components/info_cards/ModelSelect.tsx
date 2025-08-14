@@ -11,23 +11,23 @@ import {
 import { useInferStore } from "@/stores/inferStore";
 import styles from "./ModelSelect.module.scss";
 
-type Model = "tiny" | "medium" | "full";
+type Model = "tiny" | "medium" | "full" | undefined;
 
 export default function ModelSelect() {
     const model = useInferStore((s) => s.model as Model);
-
+    const setModel = useInferStore((s) => s.setModel);
     return (
         <div className={styles.container}>
             <Select
-                value={model}
+                value={model ?? ""}
                 onValueChange={(v) => {
-                    useInferStore.setState({ model: v as Model });
+                    setModel(v as Model);
                 }}
             >
                 <SelectTrigger className={styles.trigger}>
                     <div>
                         <span className={styles.icon}>🧠</span>
-                        <SelectValue placeholder="Select model" />
+                        <SelectValue placeholder="Select Model" />
                     </div>
                 </SelectTrigger>
 
