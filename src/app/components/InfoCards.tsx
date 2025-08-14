@@ -2,8 +2,7 @@ import styles from "./InfoCards.module.scss";
 import { Button } from "@/components/ui/button";
 import { FaPlay, FaPause } from "react-icons/fa";
 import { useState } from "react";
-import { inferCSV } from "../../lib/infer_csv";
-import { inferMIC, stopMIC } from "../../lib/infer_mic";
+import { startMIC, stopMIC } from "../../lib/infer_mic";
 
 function InfoCards() {
     const [isPlaying, setIsPlaying] = useState(false);
@@ -12,7 +11,7 @@ function InfoCards() {
         setIsPlaying((prev) => {
             const next = !prev;
             if (next) {
-                inferMIC(); // 마이크 추론 시작
+                startMIC(); // 마이크 추론 시작
             } else {
                 stopMIC(); // 마이크 추론 중지
             }

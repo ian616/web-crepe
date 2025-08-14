@@ -2,6 +2,7 @@ import { create } from "zustand";
 import type { InferPoint } from "@/interfaces/inferPoint";
 
 interface ChartState {
+    paused: boolean;
     data: InferPoint[];
     maxPoints: number;
     pointIdx: number;
@@ -10,6 +11,7 @@ interface ChartState {
 }
 
 export const useChartStore = create<ChartState>((set, get) => ({
+    paused: true,
     data: [],
     maxPoints: 100,
     pointIdx: 0,

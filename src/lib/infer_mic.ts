@@ -9,9 +9,8 @@ let mediaStream: MediaStream | null = null;
 let audioContext: AudioContext | null = null;
 let workletNode: AudioWorkletNode | null = null;
 let engine: CrepeEngine | null = null;
-let running = false;
 
-export async function inferMIC() {
+export async function initMIC() {
     engine = new CrepeEngine({
         coreType: "tfjs",
         tfjsUrl: "tfjs/saved_model/model.json",
@@ -23,7 +22,9 @@ export async function inferMIC() {
     console.log("[INFO] Loading CREPE Engine...");
     await engine.load();
     console.log("[INFO] Engine loaded successfully.");
+}
 
+export async function startMIC() {
     mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
     audioContext = new AudioContext(); // 입력 SR은 default (48k)
@@ -42,6 +43,8 @@ export async function inferMIC() {
 
     audioContext.createMediaStreamSource(mediaStream).connect(workletNode);
 
+    console.log("[INFO] MIC inference started.");
+    
     let busy = false;
     let lastLog = 0;
     const LOG_EVERY_MS = 20;
@@ -69,7 +72,9 @@ export async function inferMIC() {
                 //         3
                 //     )} | Latency ${latency.toFixed(1)} ms`
                 // );
-                useChartStore.getState().addData(createInferPoint(f0Hz, conf, latency, now));
+                useChartStore
+                    .getState()
+                    .addData(createInferPoint(f0Hz, conf, latency, now));
                 lastLog = now;
             }
         } catch (err) {
@@ -77,19 +82,6 @@ export async function inferMIC() {
         } finally {
             busy = false;
         }
-    };
-}
-
-function createInferPoint(f0Hz: number, conf: number, latency: number, currentTime: number): InferPoint {
-    const hzToCents = (f: number) => 1200 * Math.log2(f / 10.0);
-    return {
-        idx: useChartStore.getState().pointIdx,
-        pitchHz: f0Hz,
-        pitchCents: hzToCents(f0Hz),
-        pitchNotes: fromFreq(f0Hz).toString(),
-        confidence: conf,
-        currentTime: currentTime,
-        latency: latency,
     };
 }
 
@@ -120,7 +112,25 @@ export async function stopMIC() {
         } catch {}
         audioContext = null;
     }
-
-    running = false;
     console.log("[INFO] MIC inference stopped.");
 }
+
+
+function createInferPoint(
+    f0Hz: number,
+    conf: number,
+    latency: number,
+    currentTime: number
+): InferPoint {
+    const hzToCents = (f: number) => 1200 * Math.log2(f / 10.0);
+    return {
+        idx: useChartStore.getState().pointIdx,
+        pitchHz: f0Hz,
+        pitchCents: hzToCents(f0Hz),
+        pitchNotes: fromFreq(f0Hz).toString(),
+        confidence: conf,
+        currentTime: currentTime,
+        latency: latency,
+    };
+}
+
