@@ -1,8 +1,8 @@
 import styles from "./Main.module.scss";
-import PitchChart from "@/components/PitchChart";
-import PianoSlider from "@/components/PianoSlider";
-import InfoCards from "@/components/InfoCards";
-import Footer from "@/components/Footer";
+import PitchChart from "@/components/pitch_chart/PitchChart";
+import PianoSlider from "@/components/piano_slider/PianoSlider";
+import InfoCards from "@/components/info_cards/InfoCards";
+import Footer from "@/components/footer/Footer";
 import { initMIC } from "../../lib/infer_mic";
 import { useEffect } from "react";
 

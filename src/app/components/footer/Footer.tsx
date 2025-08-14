@@ -4,7 +4,10 @@ import styles from "./Footer.module.scss";
 export default function Footer() {
     return (
         <footer className={styles.footer}>
-            <span className={styles.author}>📌 Sungwon Lee, 2025</span>
+            <div className={styles.author}>
+                <div className={styles.pin}>📌</div> 
+                <div>Sungwon Lee, 2025</div>
+            </div>
             <nav className={styles.nav}>
                 <a
                     href="https://github.com/ian616/web-crepe"
@@ -21,7 +24,7 @@ export default function Footer() {
                     <FaLinkedin />
                 </a>
                 <a href="mailto:sung1lee@kaist.ac.kr">
-                    <FaEnvelope /> 
+                    <FaEnvelope />
                 </a>
             </nav>
         </footer>

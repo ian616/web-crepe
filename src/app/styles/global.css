@@ -45,7 +45,7 @@ p, h1, h2, h3, h4, h5, h6 {
 }
 
 :root {
-  /* 기존 palette */
+  /* palette */
   --color-bg: #0f1113;
   --color-panel: #14171c;
   --color-ring: rgba(255,255,255,0.07);

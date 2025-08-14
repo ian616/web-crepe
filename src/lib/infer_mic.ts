@@ -3,7 +3,6 @@ import "@tensorflow/tfjs-backend-webgpu";
 import { useChartStore } from "@/stores/chartStore";
 import type { InferPoint } from "@/interfaces/inferPoint";
 import { fromFreq } from "@tonaljs/note";
-import { use } from "react";
 
 let mediaStream: MediaStream | null = null;
 let audioContext: AudioContext | null = null;
@@ -44,7 +43,7 @@ export async function startMIC() {
     audioContext.createMediaStreamSource(mediaStream).connect(workletNode);
 
     console.log("[INFO] MIC inference started.");
-    
+
     let busy = false;
     let lastLog = 0;
     const LOG_EVERY_MS = 20;

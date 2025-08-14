@@ -4,7 +4,7 @@ import "uplot/dist/uPlot.min.css";
 import type uPlot from "uplot";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useChartStore } from "@/stores/chartStore";
-import ChartTooltip from "./ChartTooltip";
+import ChartTooltip from "../chart_tooltip/ChartTooltip";
 
 export default function PitchChart() {
     const plotRef = useRef<uPlot | undefined>(undefined);
@@ -18,6 +18,10 @@ export default function PitchChart() {
     setTipRef.current = setTip;
 
     const [overEl, setOverEl] = useState<HTMLDivElement | null>(null);
+
+    const COLOR_SOLID = "#f6c35b"; // high confidence
+    const COLOR_LOW = "rgba(229, 231, 235, 0.6)"; // low confidence
+    const THRESHOLD = 0.3;
 
     // chart graphics setting
     const options: uPlot.Options = useMemo(
@@ -37,7 +41,68 @@ export default function PitchChart() {
             ],
             series: [
                 {}, // x 축
-                { stroke: "#f6c35b", width: 1 }, // y 라인 스타일
+                {
+                    width: 2.5,
+                    spanGaps: true, // 한 줄로 이어서 그리고 색만 바꿔줌
+                    stroke: (u: uPlot, si: number) => {
+                        const ctx = u.ctx;
+                        const { left, width } = u.bbox;
+
+                        // 수평 그라디언트 (플롯 영역 기준)
+                        const grad = ctx.createLinearGradient(
+                            left,
+                            0,
+                            left + width,
+                            0
+                        );
+
+                        const xs = u.data[0] as number[];
+                        const pts = useChartStore.getState().data; // [{confidence, ...}]
+
+                        if (!xs.length || !pts.length) return COLOR_SOLID;
+
+                        // 현재 구간 색 계산 함수
+                        const colorAt = (i: number) =>
+                            (pts[i]?.confidence ?? 0) < THRESHOLD
+                                ? COLOR_LOW
+                                : COLOR_SOLID;
+
+                        // x -> [0..1] 오프셋으로 정규화 (캔버스 좌표)
+                        const offsetAt = (i: number) => {
+                            const xpx = u.valToPos(xs[i]!, "x", true); // canvas px
+                            return Math.min(
+                                1,
+                                Math.max(0, (xpx - left) / width)
+                            );
+                        };
+
+                        // 첫 구간 시작
+                        let prevColor = colorAt(0);
+                        grad.addColorStop(0, prevColor);
+
+                        for (let i = 1; i < xs.length; i++) {
+                            const col = colorAt(i);
+                            if (col !== prevColor) {
+                                const off = offsetAt(i); // 경계 x
+                                // 하드 스톱: 바로 이전 색 끝내고 같은 위치에서 새 색 시작
+                                grad.addColorStop(off, prevColor);
+                                grad.addColorStop(Math.min(off + 1e-6, 1), col);
+                                prevColor = col;
+                            }
+                        }
+
+                        // 마지막 색 보장
+                        grad.addColorStop(1, prevColor);
+
+                        return grad; // <- strokeStyle 로 그라디언트 반환
+                    },
+                    points: {
+                        show: (u, si, idx) => idx === u.cursor.idx,
+                        stroke: "#fff",
+                        fill: "#f6c35b",
+                        size: 9,
+                    },
+                },
             ],
             legend: {
                 show: false,
@@ -80,7 +145,7 @@ export default function PitchChart() {
                 ],
                 ready: [
                     (u) => {
-                        setOverEl(u.over as HTMLDivElement); // ★ 포털 목적지
+                        setOverEl(u.over as HTMLDivElement); // 포털 목적지
                     },
                 ],
             },
@@ -111,10 +176,11 @@ export default function PitchChart() {
 
     // chart data subscribe
     useEffect(() => {
-        const unsub = useChartStore.subscribe((y) => {
-            yRef.current = y.data.map((point) => point.pitchHz);
-            xRef.current = y.data.map((point) => point.idx);
-            plotRef.current?.setData([xRef.current, yRef.current]); // AlignedData
+        const unsub = useChartStore.subscribe((s) => {
+            const xs = s.data.map((p) => p.idx);
+            const yRaw = s.data.map((p) => p.pitchHz);
+
+            plotRef.current?.setData([xs, yRaw]);
         });
 
         return unsub;
