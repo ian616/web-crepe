@@ -4,7 +4,7 @@ import styles from "./Footer.module.scss";
 export default function Footer() {
     return (
         <footer className={styles.footer}>
-            <span className={styles.author}>2025 Sungwon Lee</span>
+            <span className={styles.author}>📌 Sungwon Lee, 2025</span>
             <nav className={styles.nav}>
                 <a
                     href="https://github.com/ian616/web-crepe"

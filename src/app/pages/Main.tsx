@@ -4,6 +4,7 @@ import PianoSlider from "@/components/PianoSlider";
 import InfoCards from "@/components/InfoCards";
 import Footer from "@/components/Footer";
 
+
 export default function Main() {
     return (
         <div className={styles.container}>
