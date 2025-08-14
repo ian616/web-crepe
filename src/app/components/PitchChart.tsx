@@ -2,33 +2,9 @@ import styles from "./PitchChart.module.scss";
 import UplotReact from "uplot-react";
 import "uplot/dist/uPlot.min.css";
 import type uPlot from "uplot";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useChartStore } from "@/stores/chartStore";
-
-const options: uPlot.Options = {
-    width: 600,
-    height: 300,
-    scales: {
-        x: { time: false },
-        y: { auto: true },
-    },
-    axes: [
-        {
-            stroke: "rgba(255,255,255,0.56)",
-            grid: { show: true, stroke: "rgba(255,255,255,0.08)" },
-        },
-        { stroke: "rgba(255,255,255,0.56)", grid: { show: false } },
-    ],
-    series: [
-        {}, // x 축
-        { stroke: "#f6c35b", width: 2 }, // y 라인 스타일
-    ],
-};
-
-const initialData: uPlot.AlignedData = [
-    [0, 1, 2, 3, 4], // 시간값 (예시)
-    [100, 200, 150, null, 300], // pitch 값
-];
+import ChartTooltip from "./ChartTooltip";
 
 export default function PitchChart() {
     const plotRef = useRef<uPlot | undefined>(undefined);
@@ -36,6 +12,81 @@ export default function PitchChart() {
 
     const xRef = useRef<number[]>([]);
     const yRef = useRef<(number | null)[]>([]);
+
+    const [tip, setTip] = useState({ open: false, x: 0, y: 0, i: -1 });
+    const setTipRef = useRef(setTip);
+    setTipRef.current = setTip;
+
+    const [overEl, setOverEl] = useState<HTMLDivElement | null>(null);
+
+    // chart graphics setting
+    const options: uPlot.Options = useMemo(
+        () => ({
+            width: 600,
+            height: 300,
+            scales: {
+                x: { time: false },
+                y: { auto: true },
+            },
+            axes: [
+                {
+                    stroke: "rgba(255,255,255,0.56)",
+                    grid: { show: true, stroke: "rgba(255,255,255,0.08)" },
+                },
+                { stroke: "rgba(255,255,255,0.56)", grid: { show: false } },
+            ],
+            series: [
+                {}, // x 축
+                { stroke: "#f6c35b", width: 1 }, // y 라인 스타일
+            ],
+            legend: {
+                show: false,
+            },
+            cursor: {
+                // zoom 기능 비활성화
+                drag: {
+                    x: false,
+                    y: false,
+                    setScale: false,
+                },
+            },
+            hooks: {
+                setCursor: [
+                    (u) => {
+                        const { idx, left, top } = u.cursor;
+                        if (idx == null || idx < 0) {
+                            setTip((t) => (t.open ? { ...t, open: false } : t));
+                            return;
+                        }
+
+                        const xVal = (u.data[0] as number[])[idx];
+                        const yVal = (u.data[1] as (number | null)[])[idx];
+                        if (xVal == null || yVal == null) {
+                            setTipRef.current((t) =>
+                                t.open ? { ...t, open: false } : t
+                            );
+                            return;
+                        }
+                        const px = u.valToPos(xVal, "x", false);
+                        const py = u.valToPos(yVal, "y", false);
+
+                        setTipRef.current({
+                            open: true,
+                            x: px,
+                            y: py,
+                            i: idx,
+                        });
+                    },
+                ],
+                ready: [
+                    (u) => {
+                        setOverEl(u.over as HTMLDivElement); // ★ 포털 목적지
+                    },
+                ],
+            },
+        }),
+        []
+    );
     // adjust chart size
     useEffect(() => {
         const el = containerRef.current;
@@ -60,18 +111,12 @@ export default function PitchChart() {
 
     // chart data subscribe
     useEffect(() => {
-        const unsub = useChartStore.subscribe(
-            (y) => {
-                yRef.current = y.data.map((point) => point.pitchHz);
-                xRef.current = y.data.map((point)=>point.currentTime);
-                plotRef.current?.setData([xRef.current, yRef.current]); // AlignedData
-            }
-        );
-        // 초기 1회 세팅
-        const y0 = useChartStore.getState().data;
-        yRef.current = y0.map((point) => point.pitchHz);
-        xRef.current = y0.map((point) => point.currentTime);
-        plotRef.current?.setData([xRef.current, yRef.current]);
+        const unsub = useChartStore.subscribe((y) => {
+            yRef.current = y.data.map((point) => point.pitchHz);
+            xRef.current = y.data.map((point) => point.idx);
+            plotRef.current?.setData([xRef.current, yRef.current]); // AlignedData
+        });
+
         return unsub;
     }, []);
 
@@ -79,7 +124,7 @@ export default function PitchChart() {
         <div ref={containerRef} className={styles.container}>
             <UplotReact
                 options={options}
-                data={initialData}
+                data={[[], []]}
                 onCreate={(u) => {
                     plotRef.current = u;
                     if (containerRef.current) {
@@ -90,13 +135,17 @@ export default function PitchChart() {
                             height: Math.floor(rect.height),
                         });
                     }
-                    const y = useChartStore.getState().data.map((point) => point.pitchHz);
-                    const x = useChartStore.getState().data.map((point) => point.currentTime);
-                    u.setData([x, y]);
                 }}
                 onDelete={() => {
                     plotRef.current = undefined;
                 }}
+            />
+            <ChartTooltip
+                open={tip.open}
+                x={tip.x}
+                y={tip.y}
+                i={tip.i}
+                portalContainer={overEl}
             />
         </div>
     );

@@ -1,0 +1,94 @@
+.tooltip {
+    position: absolute;
+    pointer-events: none;
+    z-index: 50;
+
+    width: 180px;
+
+    /* 토큰/변수 */
+    border-radius: var(--radius);
+    padding: var(--padding);
+    border: 1px solid var(--color-ring);
+
+    /* 반투명 + 블러 */
+    background: color-mix(in oklab, var(--color-muted) 5%, transparent);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+
+    color: var(--color-text);
+    font-family: var(--font-base);
+    font-size: 13px;
+    line-height: 1.45;
+
+    /* 표시 애니메이션(빠르게) */
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 120ms ease, transform 120ms ease;
+
+    &.open {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 헤더(노트명) */
+.header {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #ec4899;
+}
+
+/* 서브(Hz, cents) */
+.sub {
+    font-size: 12px;
+
+    margin-bottom: 8px;
+    display: flex;
+    font-weight: 700;
+    color: oklch(0.9 0 0);
+    .separator {
+        margin: 0 4px;
+        color: var(--muted-foreground);
+    }
+    .unit {
+        color: var(--muted-foreground);
+        margin-left: 4px;
+        font-weight: 400;
+    }
+
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(156, 163, 175, 0.3);
+}
+
+/* key:value 2열 */
+.rows {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 4px;
+
+    .key {
+        color: var(--muted-foreground);
+    }
+    .val {
+        color: oklch(0.9 0 0);
+        text-align: right;
+        font-weight: 700;
+        .unit {
+            color: var(--muted-foreground);
+            margin-left: 4px;
+            font-weight: 400;
+        }
+    }
+}
+
+/* 값 강조 컬러(선택) */
+.confGood {
+    color: oklch(0.79 0.15 150);
+} /* 초록 */
+.confMid {
+    color: oklch(0.8 0.14 95);
+} /* 노랑 */
+.confBad {
+    color: oklch(0.75 0.16 25);
+} /* 주황/빨강 */

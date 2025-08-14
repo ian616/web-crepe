@@ -3,6 +3,7 @@ import "@tensorflow/tfjs-backend-webgpu";
 import { useChartStore } from "@/stores/chartStore";
 import type { InferPoint } from "@/interfaces/inferPoint";
 import { fromFreq } from "@tonaljs/note";
+import { use } from "react";
 
 let mediaStream: MediaStream | null = null;
 let audioContext: AudioContext | null = null;
@@ -63,11 +64,11 @@ export async function inferMIC() {
             const now = performance.now();
             if (now - lastLog > LOG_EVERY_MS) {
                 const conf = Math.max(...bins);
-                console.log(
-                    `Pitch ${f0Hz.toFixed(2)} Hz | Conf ${conf.toFixed(
-                        3
-                    )} | Latency ${latency.toFixed(1)} ms`
-                );
+                // console.log(
+                //     `Pitch ${f0Hz.toFixed(2)} Hz | Conf ${conf.toFixed(
+                //         3
+                //     )} | Latency ${latency.toFixed(1)} ms`
+                // );
                 useChartStore.getState().addData(createInferPoint(f0Hz, conf, latency, now));
                 lastLog = now;
             }
@@ -82,6 +83,7 @@ export async function inferMIC() {
 function createInferPoint(f0Hz: number, conf: number, latency: number, currentTime: number): InferPoint {
     const hzToCents = (f: number) => 1200 * Math.log2(f / 10.0);
     return {
+        idx: useChartStore.getState().pointIdx,
         pitchHz: f0Hz,
         pitchCents: hzToCents(f0Hz),
         pitchNotes: fromFreq(f0Hz).toString(),
