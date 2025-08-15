@@ -10,18 +10,20 @@
     height: 40px;
     width: 255px;
     border-radius: 10px;
-    border: 1px solid var(--color-ring);
+    border: none;
     background: color-mix(in oklab, var(--color-panel, #1c1f24) 88%, white 12%);
     box-shadow: none;
     color: rgba(255, 255, 255, 0.92);
     transition: all border-color 0.15s ease;
     opacity: 0.9;
     font-size: 0.9em;
+
+    transition: all 0.15s ease-out;
     .icon {
         margin-right: 8px;
     }
     &:hover {
-        background: color-mix(in oklab, var(148 163 184) 80%, white 20%);
+        background: color-mix(in oklab, var(--color-panel) 88%, white 20%);
     }
 
     &:focus-visible {
@@ -52,13 +54,15 @@
 /* 아이템: 플랫 + 셀렉트 시만 살짝 하이라이트 */
 .item {
     padding: 8px 10px;
+    margin-bottom: 2px;
     border-radius: 8px;
     color: rgba(255, 255, 255, 0.9);
+    transition: all 0.15s ease-out;
 
     &[data-highlighted] {
         background: color-mix(
             in oklab,
-            var(--accent-mint, #22c55e) 14%,
+            var(--accent-mint, #22c55e) 9%,
             transparent
         );
         color: white;
@@ -68,7 +72,7 @@
     &[data-state="checked"] {
         background: color-mix(
             in oklab,
-            var(--accent-mint, #22c55e) 10%,
+            var(--accent-mint, #22c55e) 14%,
             transparent
         );
         color: white;

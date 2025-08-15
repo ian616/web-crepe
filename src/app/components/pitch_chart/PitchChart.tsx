@@ -21,16 +21,38 @@ export default function PitchChart() {
 
     const COLOR_SOLID = "#f6c35b"; // high confidence
     const COLOR_LOW = "rgba(229, 231, 235, 0.6)"; // low confidence
-    const THRESHOLD = 0.3;
+    const THRESHOLD = 0.35;
 
+    const INITIAL_POINTS = 100;
+    const Y_FALLBACK: [number, number] = [50, 500]; // 데이터 없을 때 Y 범위(Hz)
+
+    const initData = useMemo(() => {
+        const xs = Array.from({ length: INITIAL_POINTS }, (_, i) => i);
+        const ys = Array<number | null>(INITIAL_POINTS).fill(null);
+        return [xs, ys] as [number[], (number | null)[]];
+    }, []);
     // chart graphics setting
     const options: uPlot.Options = useMemo(
         () => ({
             width: 600,
             height: 300,
             scales: {
-                x: { time: false },
-                y: { auto: true },
+                x: {
+                    time: false,
+                    // 데이터 없으면 0..INITIAL_POINTS-1로
+                    range: (u, min, max) =>
+                        Number.isFinite(min) && Number.isFinite(max)
+                            ? [min, max]
+                            : [0, INITIAL_POINTS - 1],
+                },
+                y: {
+                    auto: true,
+                    // 데이터 없으면 기본 Hz 범위로
+                    range: (u, min, max) =>
+                        Number.isFinite(min) && Number.isFinite(max)
+                            ? [min, max]
+                            : Y_FALLBACK,
+                },
             },
             axes: [
                 {
@@ -76,23 +98,33 @@ export default function PitchChart() {
                             );
                         };
 
-                        // 첫 구간 시작
-                        let prevColor = colorAt(0);
-                        grad.addColorStop(0, prevColor);
+                        // 세그먼트 색: i-1 ~ i 구간에서 하나라도 미달이면 회색
+                        const segColor = (i: number) => {
+                            const c0 = pts[i - 1]?.confidence ?? 0;
+                            const c1 = pts[i]?.confidence ?? 0;
+                            return c0 < THRESHOLD || c1 < THRESHOLD
+                                ? COLOR_LOW
+                                : COLOR_SOLID;
+                        };
 
-                        for (let i = 1; i < xs.length; i++) {
-                            const col = colorAt(i);
-                            if (col !== prevColor) {
-                                const off = offsetAt(i); // 경계 x
-                                // 하드 스톱: 바로 이전 색 끝내고 같은 위치에서 새 색 시작
-                                grad.addColorStop(off, prevColor);
+                        // 시작 세그먼트 색
+                        let prev = segColor(1);
+                        grad.addColorStop(0, prev);
+
+                        // i 경계는 “세그먼트 경계” (i-1→i) 지점
+                        for (let i = 2; i < xs.length; i++) {
+                            const col = segColor(i);
+                            if (col !== prev) {
+                                const off = offsetAt(i - 1); // 경계 x (i-1 점 위치)
+                                // 하드 스톱: 이전색 종료 & 새색 시작을 같은 위치에
+                                grad.addColorStop(off, prev);
                                 grad.addColorStop(Math.min(off + 1e-6, 1), col);
-                                prevColor = col;
+                                prev = col;
                             }
                         }
 
                         // 마지막 색 보장
-                        grad.addColorStop(1, prevColor);
+                        grad.addColorStop(1, prev);
 
                         return grad; // <- strokeStyle 로 그라디언트 반환
                     },

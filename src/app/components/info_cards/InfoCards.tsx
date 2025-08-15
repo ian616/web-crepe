@@ -37,6 +37,7 @@ function InfoCards() {
           size="default"
           variant="default"
           onClick={handleClick}
+          disabled={runState === "idle"}
           className={btnClass}
         >
           {isLoading ? (
