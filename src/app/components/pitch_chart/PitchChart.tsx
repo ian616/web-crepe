@@ -20,10 +20,10 @@ export default function PitchChart() {
     const [overEl, setOverEl] = useState<HTMLDivElement | null>(null);
 
     const COLOR_SOLID = "#f6c35b"; // high confidence
-    const COLOR_LOW = "rgba(229, 231, 235, 0.6)"; // low confidence
+    const COLOR_LOW = "rgba(229, 231, 235, 0.55)"; // low confidence
     const THRESHOLD = 0.35;
 
-    const INITIAL_POINTS = 100;
+    const INITIAL_POINTS = 300;
     const Y_FALLBACK: [number, number] = [50, 500]; // 데이터 없을 때 Y 범위(Hz)
 
     const initData = useMemo(() => {
@@ -57,9 +57,18 @@ export default function PitchChart() {
             axes: [
                 {
                     stroke: "rgba(255,255,255,0.56)",
-                    grid: { show: true, stroke: "rgba(255,255,255,0.08)" },
+                    grid: {
+                        show: true,
+                        stroke: "rgba(255,255,255,0.1)",
+                        width: 1,
+                    },
+                    valuesFont: "400 12px Pretendard",
                 },
-                { stroke: "rgba(255,255,255,0.56)", grid: { show: false } },
+                {
+                    stroke: "rgba(255,255,255,0.56)",
+                    grid: { show: false },
+                    valuesFont: "400 12px Pretendard",
+                },
             ],
             series: [
                 {}, // x 축

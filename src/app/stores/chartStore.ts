@@ -13,7 +13,7 @@ interface ChartState {
 export const useChartStore = create<ChartState>((set, get) => ({
     paused: true,
     data: [],
-    maxPoints: 100,
+    maxPoints: 300,
     pointIdx: 0,
     addData: (val: InferPoint) => {
         const arr = [...get().data, { ...val, idx: get().pointIdx }].slice(

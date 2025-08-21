@@ -49,8 +49,6 @@ export async function startMIC() {
     console.log("[INFO] MIC inference started.");
 
     let busy = false;
-    let lastLog = 0;
-    const LOG_EVERY_MS = 20;
 
     workletNode.port.onmessage = async (e) => {
         if (e.data?.type !== "frame") return;
@@ -68,18 +66,16 @@ export async function startMIC() {
             const latency = endInfer - startInfer;
 
             const now = performance.now();
-            if (now - lastLog > LOG_EVERY_MS) {
-                const conf = Math.max(...bins);
-                // console.log(
-                //     `Pitch ${f0Hz.toFixed(2)} Hz | Conf ${conf.toFixed(
-                //         3
-                //     )} | Latency ${latency.toFixed(1)} ms`
-                // );
-                useChartStore
-                    .getState()
-                    .addData(createInferPoint(f0Hz, conf, latency, now));
-                lastLog = now;
-            }
+
+            const conf = Math.max(...bins);
+            // console.log(
+            //     `Pitch ${f0Hz.toFixed(2)} Hz | Conf ${conf.toFixed(
+            //         3
+            //     )} | Latency ${latency.toFixed(1)} ms`
+            // );
+            useChartStore
+                .getState()
+                .addData(createInferPoint(f0Hz, conf, latency, now));
         } catch (err) {
             console.error("infer error:", err);
         } finally {
@@ -119,11 +115,11 @@ export async function stopMIC() {
 }
 
 export function disposeEngine() {
-  try {
-    engine?.dispose();
-  } finally {
-    engine = null;
-  }
+    try {
+        engine?.dispose();
+    } finally {
+        engine = null;
+    }
 }
 
 function createInferPoint(
@@ -143,4 +139,3 @@ function createInferPoint(
         latency: latency,
     };
 }
-

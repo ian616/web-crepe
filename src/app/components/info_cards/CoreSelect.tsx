@@ -42,10 +42,10 @@ export default function CoreSelect() {
                             TVM (fastest, native kernels)
                         </SelectItem>
                         <SelectItem className={styles.item} value="tfjs-webgpu">
-                            TF.js WebGPU
+                            TF.js - WebGPU
                         </SelectItem>
                         <SelectItem className={styles.item} value="tfjs-webgl">
-                            TF.js WebGL (fallback)
+                            TF.js - WebGL (fallback)
                         </SelectItem>
                     </SelectGroup>
                 </SelectContent>

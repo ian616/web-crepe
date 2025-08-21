@@ -68,6 +68,7 @@ export class TFJSCore {
     dispose() {
         if (this.model) {
             this.model.dispose();
+            tf.disposeVariables();
             this.logger("[TFJSCore] Model disposed.");
         }
     }

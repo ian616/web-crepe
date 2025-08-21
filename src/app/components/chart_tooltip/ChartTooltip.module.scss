@@ -36,7 +36,7 @@
     font-size: 14px;
     font-weight: 600;
     margin-bottom: 6px;
-    color: #ec4899;
+    color: #f472b6;
 }
 
 /* 서브(Hz, cents) */
@@ -81,14 +81,3 @@
         }
     }
 }
-
-/* 값 강조 컬러(선택) */
-.confGood {
-    color: oklch(0.79 0.15 150);
-} /* 초록 */
-.confMid {
-    color: oklch(0.8 0.14 95);
-} /* 노랑 */
-.confBad {
-    color: oklch(0.75 0.16 25);
-} /* 주황/빨강 */

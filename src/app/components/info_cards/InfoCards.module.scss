@@ -3,56 +3,93 @@
     padding: 16px;
 
     display: flex;
-    .playButton {
+    justify-content: space-between;
+    .leftHeader {
         display: flex;
+        .playButton {
+            display: flex;
+            align-items: center;
+
+            transition: all 0.25s ease-in-out;
+            color: #27272a;
+
+            button {
+                &.isPlay {
+                    background-color: #4ade80;
+                }
+
+                &.isPause {
+                    background-color: #f87171;
+                }
+
+                &.loading {
+                    background-color: #ccc;
+                    cursor: not-allowed;
+                }
+
+                .dots {
+                    display: flex;
+                    gap: 4px;
+                    transform: translateY(2px);
+                    span {
+                        width: 4px;
+                        height: 4px;
+                        background: white;
+                        border-radius: 50%;
+                        animation: bounce 0.4s infinite alternate ease-out;
+                    }
+                    span:nth-child(2) {
+                        animation-delay: 0.2s;
+                    }
+                    span:nth-child(3) {
+                        animation-delay: 0.4s;
+                    }
+                }
+
+                &:hover {
+                    transform: scale(1.05);
+                }
+            }
+        }
+    }
+    .rightHeader {
+        display: flex;
+        flex-direction: column;
         align-items: center;
+        gap: 8px;
 
-        transition: all 0.25s ease-in-out;
-        color: #27272a;
+        font-size: 0.9em;
+        width: 130px;
+        .progress{
+            width: 95px;
+        }
+        .infoItem {
+            display: flex;
+            align-items: baseline;
 
-        button {
-            &.isPlay {
-                background-color: #4ade80;
+            .icon {
+                font-size: 1em;
+                margin-right: 6px;
             }
 
-            &.isPause {
-                background-color: #f87171;
+            .value {
+                font-size: 0.9em;
+                font-weight: 600;
+                margin-right: 4px;
+                color: oklch(0.9 0 0);
             }
 
-            &.loading {
-                background-color: #ccc;
-                cursor: not-allowed;
-            }
-
-            .dots {
-                display: flex;
-                gap: 4px;
-                transform: translateY(2px);
-                span {
-                    width: 4px;
-                    height: 4px;
-                    background: white;
-                    border-radius: 50%;
-                    animation: bounce 0.4s infinite alternate ease-out;
-                }
-                span:nth-child(2) {
-                    animation-delay: 0.2s;
-                }
-                span:nth-child(3) {
-                    animation-delay: 0.4s;
-                }
-            }
-
-            &:hover {
-                transform: scale(1.05);
+            .unit {
+                font-size: 0.7em;
+                color: var(--muted-foreground);
             }
         }
     }
 }
 
 @keyframes bounce {
-  to {
-    transform: translateY(-4px);
-    opacity: 0.5;
-  }
+    to {
+        transform: translateY(-4px);
+        opacity: 0.5;
+    }
 }

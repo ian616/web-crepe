@@ -27,7 +27,7 @@ class MicProcessor extends AudioWorkletProcessor {
     if (!ch0 || !src) return true;
 
     // 1) 입력 블록을 WASM 리샘플러(full)로 통과
-    // full()은 스트리밍 청크에 적합 (README의 Full API 설명)
+    // full()은 스트리밍 청크에 적합
     const resampled = src.full(ch0); // Float32Array @16k
     if (resampled && resampled.length) {
       this.buf16k.push(...resampled);
